@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useToast } from "../components/ui/use-toast";
 import Card from "./Card";
 import { Card as CardType, evaluateHand } from "../utils/pokerRules";
 
@@ -9,12 +10,17 @@ interface PokerHandProps {
 
 const PokerHand = ({ cards, onHandComplete }: PokerHandProps) => {
   const [flippedCount, setFlippedCount] = useState(0);
+  const { toast } = useToast();
 
   const handleCardFlip = () => {
     setFlippedCount(prev => {
       const newCount = prev + 1;
       if (newCount === 5) {
         const result = evaluateHand(cards);
+        toast({
+          title: "ポーカーの役",
+          description: `${result.name}！ ${result.score}点獲得！`,
+        });
         onHandComplete(result.score);
       }
       return newCount;

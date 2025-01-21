@@ -26,13 +26,26 @@ export const shuffleDeck = (deck: Card[]): Card[] => {
   return newDeck;
 };
 
+const getValueRank = (value: string): number => {
+  const ranks: { [key: string]: number } = {
+    "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9,
+    "10": 10, "J": 11, "Q": 12, "K": 13, "A": 14
+  };
+  return ranks[value];
+};
+
 export const evaluateHand = (hand: Card[]): { name: string; score: number } => {
-  // 役の判定ロジック
   const values = hand.map(card => card.value);
   const suits = hand.map(card => card.suit);
+  const ranks = values.map(getValueRank).sort((a, b) => a - b);
   
   // フラッシュの判定
   const isFlush = suits.every(suit => suit === suits[0]);
+  
+  // ストレートの判定
+  const isSequential = ranks.every((rank, i) => 
+    i === 0 || rank === ranks[i - 1] + 1
+  );
   
   // ペアの判定
   const valueCounts = values.reduce((acc, value) => {
@@ -44,11 +57,14 @@ export const evaluateHand = (hand: Card[]): { name: string; score: number } => {
   const hasThreeOfAKind = Object.values(valueCounts).some(count => count === 3);
   const hasFourOfAKind = Object.values(valueCounts).some(count => count === 4);
 
+  // 役の判定と点数計算
+  if (isFlush && isSequential) return { name: "ストレートフラッシュ", score: 150 };
   if (hasFourOfAKind) return { name: "フォーカード", score: 100 };
   if (hasThreeOfAKind && pairs === 1) return { name: "フルハウス", score: 80 };
   if (isFlush) return { name: "フラッシュ", score: 60 };
+  if (isSequential) return { name: "ストレート", score: 50 };
   if (hasThreeOfAKind) return { name: "スリーカード", score: 40 };
   if (pairs === 2) return { name: "ツーペア", score: 30 };
   if (pairs === 1) return { name: "ワンペア", score: 20 };
-  return { name: "ノーペア", score: 10 };
+  return { name: "ハイカード", score: 10 };
 };

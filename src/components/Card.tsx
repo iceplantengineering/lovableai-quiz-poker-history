@@ -8,13 +8,13 @@ interface CardProps {
 }
 
 const Card = ({ card, index, onFlip }: CardProps) => {
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsAnimating(true);
+      setIsFlipped(true);
       onFlip();
-    }, index * 1000);
+    }, index * 1000); // 1秒ごとにカードを開く
 
     return () => clearTimeout(timer);
   }, [index, onFlip]);
@@ -24,26 +24,22 @@ const Card = ({ card, index, onFlip }: CardProps) => {
   };
 
   return (
-    <div
-      className={`relative w-24 h-36 ${
-        isAnimating ? "animate-card-deal" : ""
-      } transition-transform duration-500`}
-    >
+    <div className="relative w-24 h-36 transition-transform duration-500">
       <div
-        className={`w-full h-full ${
-          card.isFlipped ? "rotate-y-180" : ""
-        } transform-style-preserve-3d transition-transform duration-500`}
+        className={`w-full h-full transition-transform duration-500 ${
+          isFlipped ? "rotate-y-180" : ""
+        } transform-style-preserve-3d`}
       >
         <div
           className={`absolute w-full h-full bg-white border-2 border-gameGold rounded-lg shadow-lg ${
-            card.isFlipped ? "hidden" : "flex"
+            isFlipped ? "hidden" : "flex"
           } items-center justify-center`}
         >
           <div className="text-gameGreen text-2xl">🎴</div>
         </div>
         <div
           className={`absolute w-full h-full bg-white border-2 border-gameGold rounded-lg shadow-lg ${
-            card.isFlipped ? "flex" : "hidden"
+            isFlipped ? "flex" : "hidden"
           } items-center justify-center ${getColor(card.suit)}`}
         >
           <div className="text-3xl font-bold">
