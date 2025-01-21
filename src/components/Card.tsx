@@ -5,19 +5,22 @@ interface CardProps {
   card: CardType;
   index: number;
   onFlip: () => void;
+  shouldFlip: boolean;
 }
 
-const Card = ({ card, index, onFlip }: CardProps) => {
+const Card = ({ card, index, onFlip, shouldFlip }: CardProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsFlipped(true);
-      onFlip();
-    }, (index + 1) * 1000); // インデックスに1を加えて、最初のカードも遅延を持つようにする
+    if (shouldFlip) {
+      const timer = setTimeout(() => {
+        setIsFlipped(true);
+        onFlip();
+      }, index * 1000); // 1秒ごとにカードを開く
 
-    return () => clearTimeout(timer);
-  }, [index, onFlip]);
+      return () => clearTimeout(timer);
+    }
+  }, [index, onFlip, shouldFlip]);
 
   const getColor = (suit: string) => {
     return suit === "♥" || suit === "♦" ? "text-red-600" : "text-black";
