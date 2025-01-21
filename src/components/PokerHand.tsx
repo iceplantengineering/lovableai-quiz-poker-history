@@ -15,13 +15,19 @@ const PokerHand = ({ cards, onHandComplete }: PokerHandProps) => {
   const handleCardFlip = () => {
     setFlippedCount(prev => {
       const newCount = prev + 1;
+      
+      // 最後のカードがめくられた時
       if (newCount === 5) {
-        const result = evaluateHand(cards);
-        toast({
-          title: "ポーカーの役",
-          description: `${result.name}！ ${result.score}点獲得！`,
-        });
-        onHandComplete(result.score);
+        // 少し待ってから役を判定
+        setTimeout(() => {
+          const result = evaluateHand(cards);
+          toast({
+            title: "ポーカーの役",
+            description: `${result.name}！ ${result.score}点獲得！`,
+            duration: 3000,
+          });
+          onHandComplete(result.score);
+        }, 1000); // 最後のカードがめくられてから1秒後に判定
       }
       return newCount;
     });

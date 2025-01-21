@@ -14,7 +14,7 @@ const Card = ({ card, index, onFlip }: CardProps) => {
     const timer = setTimeout(() => {
       setIsFlipped(true);
       onFlip();
-    }, index * 1000); // 1秒ごとにカードを開く
+    }, (index + 1) * 1000); // インデックスに1を加えて、最初のカードも遅延を持つようにする
 
     return () => clearTimeout(timer);
   }, [index, onFlip]);
@@ -24,25 +24,28 @@ const Card = ({ card, index, onFlip }: CardProps) => {
   };
 
   return (
-    <div className="relative w-24 h-36 transition-transform duration-500">
+    <div className="relative w-24 h-36">
       <div
-        className={`w-full h-full transition-transform duration-500 ${
+        className={`w-full h-full transition-all duration-500 transform ${
           isFlipped ? "rotate-y-180" : ""
-        } transform-style-preserve-3d`}
+        } preserve-3d`}
+        style={{ transformStyle: 'preserve-3d' }}
       >
         <div
           className={`absolute w-full h-full bg-white border-2 border-gameGold rounded-lg shadow-lg ${
-            isFlipped ? "hidden" : "flex"
-          } items-center justify-center`}
+            isFlipped ? "opacity-0" : "opacity-100"
+          } flex items-center justify-center backface-hidden`}
+          style={{ backfaceVisibility: 'hidden' }}
         >
           <div className="text-gameGreen text-2xl">🎴</div>
         </div>
         <div
           className={`absolute w-full h-full bg-white border-2 border-gameGold rounded-lg shadow-lg ${
-            isFlipped ? "flex" : "hidden"
-          } items-center justify-center ${getColor(card.suit)}`}
+            isFlipped ? "opacity-100" : "opacity-0"
+          } flex items-center justify-center backface-hidden rotate-y-180`}
+          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
         >
-          <div className="text-3xl font-bold">
+          <div className={`text-3xl font-bold ${getColor(card.suit)}`}>
             {card.value}
             {card.suit}
           </div>
