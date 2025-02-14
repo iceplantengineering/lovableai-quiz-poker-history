@@ -51,13 +51,19 @@ const Index = () => {
           description: `残りライフ: ${newLives}`,
           variant: "destructive",
         });
+        // 不正解の場合も次の問題に進むように変更
+        setTimeout(() => {
+          setShowCards(false);
+          setCurrentQuestionIndex(prev => prev + 1);
+        }, 2000);
       }
-      setShowCards(true);
     }
   };
 
   const handleHandComplete = (handScore: number) => {
-    setScore(prev => prev + handScore);
+    if (isCorrect) {
+      setScore(prev => prev + handScore);
+    }
     setTimeout(() => {
       setShowCards(false);
       setCurrentQuestionIndex(prev => prev + 1);
