@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState } from "react";
 import { Card as CardType } from "../utils/pokerRules";
 
 interface CardProps {
@@ -11,23 +12,22 @@ interface CardProps {
 const Card = ({ card, index, onFlip, shouldFlip }: CardProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
-  useEffect(() => {
-    if (shouldFlip) {
-      const timer = setTimeout(() => {
-        setIsFlipped(true);
-        onFlip();
-      }, index * 1000); // 1秒ごとにカードを開く
-
-      return () => clearTimeout(timer);
+  const handleClick = () => {
+    if (shouldFlip && !isFlipped) {
+      setIsFlipped(true);
+      onFlip();
     }
-  }, [index, onFlip, shouldFlip]);
+  };
 
   const getColor = (suit: string) => {
     return suit === "♥" || suit === "♦" ? "text-red-600" : "text-black";
   };
 
   return (
-    <div className="relative w-24 h-36">
+    <div 
+      className="relative w-24 h-36 cursor-pointer"
+      onClick={handleClick}
+    >
       <div
         className={`w-full h-full transition-all duration-500 transform ${
           isFlipped ? "rotate-y-180" : ""
