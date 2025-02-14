@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import Quiz from "../components/Quiz";
 import PokerHand from "../components/PokerHand";
@@ -10,6 +11,7 @@ const Index = () => {
   const [score, setScore] = useState(0);
   const [cards, setCards] = useState<Card[]>([]);
   const [showCards, setShowCards] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(false);
   const { toast } = useToast();
 
   const dealCards = () => {
@@ -18,8 +20,9 @@ const Index = () => {
     setShowCards(true);
   };
 
-  const handleAnswer = (isCorrect: boolean) => {
-    if (isCorrect) {
+  const handleAnswer = (correct: boolean) => {
+    setIsCorrect(correct);
+    if (correct) {
       toast({
         title: "正解！",
         description: "カードが配られます...",
@@ -31,6 +34,7 @@ const Index = () => {
         description: "もう一度挑戦してください",
         variant: "destructive",
       });
+      setShowCards(true); // 不正解の場合もカードを表示
     }
   };
 
@@ -58,7 +62,11 @@ const Index = () => {
                 onAnswer={handleAnswer}
               />
             ) : (
-              <PokerHand cards={cards} onHandComplete={handleHandComplete} />
+              <PokerHand 
+                cards={cards} 
+                onHandComplete={handleHandComplete}
+                isCorrect={isCorrect}
+              />
             )}
           </>
         ) : (
