@@ -13,6 +13,7 @@ const Index = () => {
   const [showCards, setShowCards] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [lives, setLives] = useState(3);
+  const [heartBreaking, setHeartBreaking] = useState<number | null>(null);
   const [shuffledQuestions, setShuffledQuestions] = useState(shuffleQuestions(quizQuestions));
   const { toast } = useToast();
 
@@ -36,7 +37,12 @@ const Index = () => {
       dealCards();
     } else {
       const newLives = lives - 1;
-      setLives(newLives);
+      setHeartBreaking(newLives); // アニメーション用のインデックスを設定
+      
+      setTimeout(() => {
+        setLives(newLives);
+        setHeartBreaking(null);
+      }, 500);
       
       if (newLives <= 0) {
         toast({
@@ -44,14 +50,13 @@ const Index = () => {
           description: "ライフが尽きました",
           variant: "destructive",
         });
-        setCurrentQuestionIndex(shuffledQuestions.length); // ゲーム終了
+        setCurrentQuestionIndex(shuffledQuestions.length);
       } else {
         toast({
           title: "不正解",
           description: `残りライフ: ${newLives}`,
           variant: "destructive",
         });
-        // 不正解の場合も次の問題に進むように変更
         setTimeout(() => {
           setShowCards(false);
           setCurrentQuestionIndex(prev => prev + 1);
@@ -79,7 +84,13 @@ const Index = () => {
             <p className="text-2xl text-white">現在のスコア: {score}</p>
             <div className="flex gap-2">
               {[...Array(3)].map((_, i) => (
-                <span key={i} className="text-2xl transition-opacity duration-500" style={{ opacity: i < lives ? 1 : 0.2 }}>
+                <span 
+                  key={i} 
+                  className={`text-2xl transition-all duration-500 transform ${
+                    heartBreaking === i ? 'scale-150 opacity-0' : ''
+                  }`}
+                  style={{ opacity: i < lives ? 1 : 0.2 }}
+                >
                   ❤️
                 </span>
               ))}
