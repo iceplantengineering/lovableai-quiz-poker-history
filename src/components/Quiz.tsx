@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { QuizQuestion } from "../utils/quizData";
 import { Button } from "../components/ui/button";
 
@@ -10,6 +10,11 @@ interface QuizProps {
 
 const Quiz = ({ question, onAnswer }: QuizProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+
+  // 質問が変わるたびに選択状態をリセット
+  useEffect(() => {
+    setSelectedAnswer(null);
+  }, [question]);
 
   const handleAnswer = (index: number) => {
     setSelectedAnswer(index);
