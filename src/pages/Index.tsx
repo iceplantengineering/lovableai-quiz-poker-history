@@ -5,6 +5,7 @@ import PokerHand from "../components/PokerHand";
 import { quizQuestions, shuffleQuestions } from "../utils/quizData";
 import { createDeck, shuffleDeck, Card } from "../utils/pokerRules";
 import { useToast } from "../components/ui/use-toast";
+import { Button } from "../components/ui/button";
 
 const Index = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -20,6 +21,14 @@ const Index = () => {
   useEffect(() => {
     setShuffledQuestions(shuffleQuestions(quizQuestions));
   }, []);
+
+  const resetGame = () => {
+    setCurrentQuestionIndex(0);
+    setScore(0);
+    setLives(3);
+    setShowCards(false);
+    setShuffledQuestions(shuffleQuestions(quizQuestions));
+  };
 
   const dealCards = () => {
     const deck = shuffleDeck(createDeck());
@@ -116,8 +125,23 @@ const Index = () => {
         ) : (
           <div className="text-center text-white">
             <h2 className="text-3xl font-bold mb-4">ゲーム終了！</h2>
-            <p className="text-2xl">最終スコア: {score}</p>
-            {lives <= 0 && <p className="text-xl text-red-400 mt-2">ライフが尽きました</p>}
+            <p className="text-2xl mb-6">最終スコア: {score}</p>
+            {lives <= 0 && <p className="text-xl text-red-400 mb-8">ライフが尽きました</p>}
+            <div className="space-x-4">
+              <Button 
+                onClick={resetGame}
+                className="bg-gameGold hover:bg-gameGold/90 text-black px-8 py-3 text-lg"
+              >
+                もう一度プレイ
+              </Button>
+              <Button 
+                onClick={() => window.close()}
+                variant="destructive"
+                className="px-8 py-3 text-lg"
+              >
+                終わる
+              </Button>
+            </div>
           </div>
         )}
       </div>
