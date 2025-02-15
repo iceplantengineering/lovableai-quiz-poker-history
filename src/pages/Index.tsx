@@ -16,6 +16,7 @@ const Index = () => {
   const [lives, setLives] = useState(3);
   const [heartBreaking, setHeartBreaking] = useState<number | null>(null);
   const [shuffledQuestions, setShuffledQuestions] = useState(shuffleQuestions(quizQuestions));
+  const [showGoodbye, setShowGoodbye] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -30,6 +31,13 @@ const Index = () => {
     setShuffledQuestions(shuffleQuestions(quizQuestions));
   };
 
+  const handleGameEnd = () => {
+    setShowGoodbye(true);
+    setTimeout(() => {
+      window.close();
+    }, 2000);
+  };
+
   const dealCards = () => {
     const deck = shuffleDeck(createDeck());
     setCards(deck.slice(0, 5));
@@ -42,11 +50,12 @@ const Index = () => {
       toast({
         title: "正解！",
         description: "カードが配られます...",
+        duration: 2000,
       });
       dealCards();
     } else {
       const newLives = lives - 1;
-      setHeartBreaking(newLives); // アニメーション用のインデックスを設定
+      setHeartBreaking(newLives);
       
       setTimeout(() => {
         setLives(newLives);
@@ -58,6 +67,7 @@ const Index = () => {
           title: "ゲームオーバー",
           description: "ライフが尽きました",
           variant: "destructive",
+          duration: 2000,
         });
         setCurrentQuestionIndex(shuffledQuestions.length);
       } else {
@@ -65,6 +75,7 @@ const Index = () => {
           title: "不正解",
           description: `残りライフ: ${newLives}`,
           variant: "destructive",
+          duration: 2000,
         });
         setTimeout(() => {
           setShowCards(false);
@@ -83,6 +94,17 @@ const Index = () => {
       setCurrentQuestionIndex(prev => prev + 1);
     }, 2000);
   };
+
+  if (showGoodbye) {
+    return (
+      <div className="min-h-screen bg-gameGreen flex items-center justify-center">
+        <div className="text-center text-white">
+          <h2 className="text-4xl font-bold mb-4">また頑張ろう！</h2>
+          <p className="text-2xl">次回の挑戦をお待ちしています</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gameGreen p-4">
@@ -135,7 +157,7 @@ const Index = () => {
                 もう一度プレイ
               </Button>
               <Button 
-                onClick={() => window.close()}
+                onClick={handleGameEnd}
                 variant="destructive"
                 className="px-8 py-3 text-lg"
               >
